@@ -1,59 +1,40 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "funcoes.h"
+#include "matrix.h"
 
-int main()
-{
-    system("clear");
-    int opt, linhas, colunas;
+int main(){
 
-    printf("Digite o tamanho da matriz: \n");
-    printf("Linhas: ");
-    scanf("%d", &linhas);
-    printf("Colunas: ");
-    scanf("%d", &colunas);
+    Matrix matrix = createMatrix(3,3);
 
-    Lista* elem_linhas[linhas];
-    Lista* elem_colunas[colunas];
+    //printMatrixPointers(matrix);
 
-    //Colocando todas
-    for(int i = 0; i < linhas; i++){
-        elem_linhas[i] = NULL;
-    }
+    insertNumber(matrix, 100, 0, 0);
+    insertNumber(matrix, 150, 0, 1);
+    insertNumber(matrix, 175, 0, 2);
 
-    for(int i = 0; i < colunas; i++){
-        elem_colunas[i] = NULL;
-    }
+    insertNumber(matrix, 200, 1, 0);
+    //insertNumber(matrix, 250, 1, 1);
+    insertNumber(matrix, 275, 1, 2);
 
-    while (1)
-    {
-        opt = menu(opt, elem_linhas, elem_colunas, linhas, colunas);
+    insertNumber(matrix, 300, 2, 0);
+    insertNumber(matrix, 350, 2, 1);
+    //insertNumber(matrix, 375, 2, 2);
+    
+    //printMatrixRowAndColumns(matrix);
 
-        switch (opt)
-        {
-        case 1:
-            inserir_elemento(elem_linhas, elem_colunas);
-            break;
+    printf("\n\nQuantidade de linhas: %d\n\n", getQuantidadeLinhas(matrix));
+    printf("\n\nQuantidade de colunas: %d\n\n", getQuantidadeColunas(matrix));
+    printf("\n\nQuantidade de colunas ocupadas: %d\n\n", getQuantidadeColunasOcupadas(matrix));
 
-        case 2:
-            imprime_lista(elem_linhas, linhas, colunas);
-            printf("\nPressione enter para voltar...");
-            getchar();
-            getchar();
-            break;
 
-        case 3:
-            desaloca(elem_linhas, linhas, colunas);
-            return 0;
-            break;
+    printFormattedMatrix(matrix);
 
-        default:
-            printf("Opcao invalida, por favor digite novamente...\n");
-            getchar();
-            getchar();
-            break;
-        }
-    }
+    int number = 0;
+    number = getNumberInPosition(matrix, 2, 2);
+
+    printf("Numero na posicao [2][2] = %d\n\n", number);
+
+    freeMatrix(matrix);
 
     return 0;
 }
