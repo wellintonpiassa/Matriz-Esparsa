@@ -3,256 +3,242 @@
 #include <stdbool.h>
 #include "matrix.h"
 
-typedef struct Column column;
+typedef struct Coluna coluna;
 
-struct Column{
-    int data;
-    int position;
-    column *proxCol;
+struct Coluna{
+    int valor;
+    int idColuna;
+    coluna *proxCol;
 };
 
 typedef struct {
-    int linha;
-    column* colunas;
-}row;
+    int idLinha;
+    int colunasOcupadas;
+    coluna* colunas;
+}linha;
 
 typedef struct {
-    int linhas;
-    int colunas;
-    int colunasOcupadas;
-    row** primeiraLinha;
-}matrix;
+    int qtdLinhas;
+    int qtdColunas;
+    linha** linhas;
+}matriz;
 
 
-Matrix createMatrix(int rowNumber, int colNumber){
+/* Linhas e colunas da matriz iniciam com 1 */
 
-    matrix* mat = (matrix*) malloc(sizeof(matrix));
+Matriz createMatrix(int qtdLinhas, int qtdColunas){
 
-    mat->linhas = rowNumber;
-    mat->colunas = colNumber;
-    mat->colunasOcupadas = 0;
+    matriz* mat = (matriz*) malloc(sizeof(matriz));
+
+    mat->qtdLinhas = qtdLinhas;
+    mat->qtdColunas = qtdColunas;
     
-    mat->primeiraLinha = (row**) malloc(rowNumber * sizeof(row*));
+    mat->linhas = (linha**) malloc(qtdLinhas * sizeof(linha*));
 
-    for(int i=0; i < rowNumber; i++){
-        mat->primeiraLinha[i] = (row*) malloc(sizeof(row));
-        mat->primeiraLinha[i]->colunas = NULL;
-        mat->primeiraLinha[i]->linha = i+1;
+    for(int i=0; i < qtdLinhas; i++){
+        mat->linhas[i] = (linha*) malloc(sizeof(linha));
+        mat->linhas[i]->colunas = NULL;
+        mat->linhas[i]->idLinha = i+1;
+        mat->linhas[i]->colunasOcupadas = 0;
     }
 
     return mat;
 }
 
 
-
-
-void insertNumber(Matrix Mat, int number, int rowPosition, int colPosition){
+int insertNumber(Matriz Mat, int valor, int linhaDestino, int colunaDestino){
     if(Mat == NULL){
-        printf("Matriz invalida\n");
-        return;
+        printf("Falha ao inserir valor, matriz invalida\n");
+        return 0;
     }
 
-    matrix* mat = (matrix*) Mat;
+    matriz* mat = (matriz*) Mat;
 
-    if(rowPosition > mat->linhas-1){
-        printf("Linha nao existente na matriz, a quantidade maxima de linhas sao: %d\n", mat->linhas);
-        return;
+    if(linhaDestino > mat->qtdLinhas || linhaDestino < 1 || colunaDestino > mat->qtdColunas || colunaDestino < 1){
+        printf("\nFalha na insercao do valor %d. A matriz possui apenas %d linhas e %d colunas!\n", valor, mat->qtdLinhas, mat->qtdColunas);
+        return 0;
     }
+    
+    linha* ponteiroLinhaDestino = mat->linhas[linhaDestino-1];
+    coluna* primeiraColuna = ponteiroLinhaDestino->colunas;
 
-    if(colPosition > mat->colunas-1){
-        printf("Coluna nao existente na matriz, a quantidade maxima de colunas sao: %d\n", mat->colunas);
-        return;
-    }
- 
-    row* linha = mat->primeiraLinha[rowPosition];
-    column* firstColumn = mat->primeiraLinha[rowPosition]->colunas;
-
-    // Inserindo na lista vazia
-    if(firstColumn == NULL){
-        printf("A lista dessa linha esta vazia, portanto, inserindo a primeira coluna\n");
-
-        linha->colunas = (column*) malloc(sizeof(column));
-        linha->colunas->data = number;
-        linha->colunas->position =colPosition;
-        linha->colunas->proxCol = NULL;
-
-        mat->colunasOcupadas++;
-        printf("%d %d\n", mat->colunasOcupadas, linha->colunas->data);
-        getchar();
+    // Insercao na linha vazia
+    if(primeiraColuna == NULL){
+        coluna* novaColuna = (coluna*) malloc(sizeof(coluna));
+        novaColuna->valor = valor;
+        novaColuna->idColuna = colunaDestino;
+        novaColuna->proxCol = NULL;
+        ponteiroLinhaDestino->colunas = novaColuna;
+        ponteiroLinhaDestino->colunasOcupadas++;
+        return 1;
     }
 
     else{
+        coluna* colunaAtual = primeiraColuna;
 
-        column* currentColumn = firstColumn;
+        // Insercao no inicio
+        if(colunaAtual->idColuna > colunaDestino){   
+            coluna* novaColuna = (coluna*) malloc(sizeof(coluna));
+            novaColuna->valor = valor;
+            novaColuna->idColuna = colunaDestino;
+            novaColuna->proxCol = colunaAtual;
+            ponteiroLinhaDestino->colunas = novaColuna;
+            ponteiroLinhaDestino->colunasOcupadas++;
+            return 1;
+        }
 
-        while(currentColumn != NULL){
+        while(colunaAtual != NULL){
 
-            if(currentColumn->proxCol == NULL || currentColumn->proxCol->position > colPosition){
-                
-                column* newColumn = (column*) malloc(sizeof(column));
-
-                newColumn->data = number;
-                newColumn->position = colPosition;
-                newColumn->proxCol = currentColumn->proxCol;
-
-                currentColumn->proxCol = newColumn;
-
-                mat->colunasOcupadas++;
-                printf("%d %d\n", mat->colunasOcupadas, newColumn->data);
-                getchar();
-
-                return;
+            // Insercao no final
+            if(colunaAtual->proxCol == NULL){
+                coluna* novaColuna = (coluna*) malloc(sizeof(coluna));
+                novaColuna->valor = valor;
+                novaColuna->idColuna = colunaDestino;
+                novaColuna->proxCol = NULL;
+                colunaAtual->proxCol = novaColuna;
+                ponteiroLinhaDestino->colunasOcupadas++;
+                return 1;
             }
 
-            currentColumn = currentColumn->proxCol;
+            // Insercao no meio
+            if(colunaAtual->idColuna < colunaDestino && colunaAtual->proxCol->idColuna > colunaDestino){
+                coluna* novaColuna = (coluna*) malloc(sizeof(coluna));
+                novaColuna->valor = valor;
+                novaColuna->idColuna = colunaDestino;
+                novaColuna->proxCol = colunaAtual->proxCol;
+                colunaAtual->proxCol = novaColuna;
+                ponteiroLinhaDestino->colunasOcupadas++;
+                return 1;
+            }
 
+            colunaAtual = colunaAtual->proxCol;
         }
     }
 }
 
 
-void removeNumber(Matrix Mat, int rowPosition, int colPosition){
+int removeNumber(Matriz Mat, int linhaID, int colunaID){
 
     if(Mat == NULL){
-        printf("Matriz invalida\n");
-        return;
+        printf("Falha ao remover valor, matriz invalida\n");
+        return 0;
     }
 
-    matrix* mat = (matrix*) Mat;
+    matriz* mat = (matriz*) Mat;
     
-    if(rowPosition > mat->linhas-1){
-        printf("Linha nao existente na matriz, a quantidade maxima de linhas sao: %d\n", mat->linhas);
-        return;
+    if(linhaID > mat->qtdLinhas || linhaID < 1 || colunaID > mat->qtdColunas || colunaID < 1){
+        printf("\nFalha na remocao. A matriz possui apenas %d linhas e %d colunas!\n", mat->qtdLinhas, mat->qtdColunas);
+        return 0;
     }
 
-    if(colPosition > mat->colunas-1){
-        printf("Coluna nao existente na matriz, a quantidade maxima de colunas sao: %d\n", mat->colunas);
-        return;
-    }
-
-    row* linha = mat->primeiraLinha[rowPosition];
-    column* firstColumn = linha->colunas;
+    linha* linhaRemover = mat->linhas[linhaID-1];
+    coluna* primeiraColuna = linhaRemover->colunas;
     
-    column* currentColumn = firstColumn;
+    coluna* colunaAtual = primeiraColuna;
+    coluna* colunaAnterior = primeiraColuna;
 
-    while(currentColumn != NULL){
-
-        if(currentColumn->proxCol->position == colPosition){
+    while(colunaAtual != NULL){
+        
+        if(colunaAtual->idColuna == colunaID){
             
-            currentColumn->proxCol = currentColumn->proxCol->proxCol;
-            free(currentColumn->proxCol);
-            mat->colunasOcupadas--;
-            return;
-
+            if(linhaRemover->colunasOcupadas == 1 || colunaID == 1)
+                linhaRemover->colunas = colunaAtual->proxCol; 
+            else
+                colunaAnterior->proxCol = colunaAtual->proxCol;
+            
+            linhaRemover->colunasOcupadas--;
+            free(colunaAtual);
+            return 1;
         }
 
-        currentColumn = currentColumn->proxCol;
+        colunaAnterior = colunaAtual;
+        colunaAtual = colunaAtual->proxCol;
     }
 
     printf("Nao ha valores nessa coluna\n");
-
-}
-
-int getQuantidadeColunas(Matrix Mat){
-
-    if(Mat == NULL){
-        printf("Matriz invalida\n");
-        return -1;
-    }
-
-    matrix* mat = (matrix*) Mat;
-
-    return mat->colunas;
-
-}
-
-int getQuantidadeColunasOcupadas(Matrix Mat){
-
-    if(Mat == NULL){
-        printf("Matriz invalida\n");
-        return -1;
-    }
-
-    matrix* mat = (matrix*) Mat;
-
-    return mat->colunasOcupadas;
-
-}
-
-int getQuantidadeLinhas(Matrix Mat){
-
-    if(Mat == NULL){
-        printf("Matriz invalida\n");
-        return -1;
-    }
-
-    matrix* mat = (matrix*) Mat;
-
-    return mat->linhas;
-
+    return 0;
 }
 
 
-int getNumberInPosition(Matrix Mat, int rowPosition, int colPosition){
+int getQuantidadeLinhas(Matriz Mat){
 
     if(Mat == NULL){
-        printf("Matriz invalida\n");
-        return -1;
+        printf("ErroGetLinhas: Matriz invalida\n");
+        return ERROR_ID;
     }
 
-    matrix* mat = (matrix*) Mat;
+    matriz* mat = (matriz*) Mat;
+    return mat->qtdLinhas;
+}
+
+
+int getQuantidadeColunas(Matriz Mat){
+
+    if(Mat == NULL){
+        printf("Erro getColunas: Matriz invalida\n");
+        return ERROR_ID;
+    }
+
+    matriz* mat = (matriz*) Mat;
+    return mat->qtdColunas;
+}
+
+
+int getNumberInPosition(Matriz Mat, int linhaID, int colunaID){
+
+    if(Mat == NULL){
+        printf("Erro getNumberInPosition: Matriz invalida\n");
+        return ERROR_ID;
+    }
+
+    matriz* mat = (matriz*) Mat;
     
-    if(rowPosition > mat->linhas-1){
-        printf("Linha nao existente na matriz, a quantidade maxima de linhas sao: %d\n", mat->linhas);
-        return -1;
+    if(linhaID > mat->qtdLinhas || linhaID < 1 || colunaID > mat->qtdColunas || colunaID < 1){
+        printf("\nFalha na remocao. A matriz possui apenas %d linhas e %d colunas!\n", mat->qtdLinhas, mat->qtdColunas);
+        return ERROR_ID;
     }
 
-    if(colPosition > mat->colunas-1){
-        printf("Coluna nao existente na matriz, a quantidade maxima de colunas sao: %d\n", mat->colunas);
-        return -1;
-    }
+    linha* linhaDestino = mat->linhas[linhaID-1];
+    coluna* colunaAtual = linhaDestino->colunas;
 
-    row* linha = mat->primeiraLinha[rowPosition];
-    column* firstColumn = linha->colunas;
+    while(colunaAtual != NULL){
 
-    column* currentColumn = firstColumn;
+        if(colunaAtual->idColuna == colunaID)
+            return colunaAtual->valor;
 
-    while(currentColumn != NULL){
-
-        if(currentColumn->position == colPosition)
-            return currentColumn->data;
-
-        currentColumn = currentColumn->proxCol;
+        colunaAtual = colunaAtual->proxCol;
     }
 
     printf("Nao ha valores nessa posicao\n");
-    return -1;
+    return ERROR_ID;
 }
 
-void printFormattedMatrix(Matrix Mat){
+
+void printFormattedMatrix(Matriz Mat){
 
     if(Mat == NULL){
-        printf("Matriz invalida\n");
+        printf("Erro print: Matriz invalida\n");
         return;
     }
 
-    matrix* mat = (matrix*) Mat;
+    matriz* mat = (matriz*) Mat;
 
-    printf("**** PRINT DA MATRIZ ****\n\n");
+    printf("\n\n**** PRINT DA MATRIZ ****\n\n");
 
-    for (int i = 0; i < mat->linhas; i++){
+    for(int i = 0; i < mat->qtdLinhas; i++){
         
-        column* currentColumn = mat->primeiraLinha[i]->colunas;
-        int count = 0;
+        linha* linhaAtual = mat->linhas[i];
+        coluna* colunaAtual = linhaAtual->colunas;
+        
+        int contador = 1;
 
-        while(count < mat->colunas){
+        while(contador <= mat->qtdColunas){
             
-            if(currentColumn != NULL){
+            if(colunaAtual != NULL){
 
-                if(currentColumn->position == count){
-                    printf("%d ", currentColumn->data);
-                    currentColumn = currentColumn->proxCol;
-
+                if(colunaAtual->idColuna == contador){
+                    printf("%d ", colunaAtual->valor);
+                    colunaAtual = colunaAtual->proxCol;
                 }
 
                 else{
@@ -264,9 +250,9 @@ void printFormattedMatrix(Matrix Mat){
                 printf("0 ");
             }
             
-            count++;
+            contador++;
 
-            if(currentColumn == NULL && count == mat->colunas-1){
+            if(colunaAtual == NULL && contador == mat->qtdColunas){
                 printf("0 ");
                 break;
             }
@@ -277,73 +263,27 @@ void printFormattedMatrix(Matrix Mat){
 }
 
 
-void printMatrixPointers(Matrix Mat){
-
-    if(Mat == NULL){
-        printf("Matriz invalida\n");
-        return;
-    }
-
-    matrix* mat = (matrix*) Mat;
-
-    for (int i = 0; i < mat->linhas; i++){
-        printf("Linha: %d\n", mat->primeiraLinha[i]->linha);
-        printf("Coluna: %p\n",mat->primeiraLinha[i]->colunas);
-    }
-}
-
-void printMatrixRowAndColumns(Matrix Mat){
-    if(Mat == NULL){
-        printf("Matriz invalida\n");
-        return;
-    }
-
-    matrix* mat = (matrix*) Mat;
-
-    for (int i = 0; i < mat->linhas; i++){
-        
-        column* currentColumn = mat->primeiraLinha[i]->colunas;
-        
-        printf("Linha %d:\n", i);
-        
-        if(currentColumn == NULL)
-            printf("Nao ha colunas nessa linha\n\n");
-
-        else{
-            while(currentColumn != NULL){
-                
-                printf("coluna %d: \nDados: %d\nProx: %p\n\n", currentColumn->position, currentColumn->data, currentColumn->proxCol);
-                currentColumn = currentColumn->proxCol;
-            }
-        }
-    }
-}
-
-
-void freeMatrix(Matrix Mat){
+void freeMatrix(Matriz Mat){
     
-    if(Mat == NULL){
-        printf("Matriz invalida\n");
+    if(Mat == NULL)
         return;
-    }
 
-    matrix* mat = (matrix*) Mat;
+    matriz* mat = (matriz*) Mat;
 
-    for (int i = 0; i < mat->linhas; i++){
+    for (int i = 0; i < mat->qtdLinhas; i++){
         
-        column* currentColumn = mat->primeiraLinha[i]->colunas;
+        coluna* colunaAtual = mat->linhas[i]->colunas;
+        coluna* prox;
 
-        column* prox;
-
-        while(currentColumn != NULL){
-            prox = currentColumn->proxCol; 
-            free(currentColumn);
-            currentColumn = prox;
+        while(colunaAtual != NULL){
+            prox = colunaAtual->proxCol; 
+            free(colunaAtual);
+            colunaAtual = prox;
         }
 
-        free(mat->primeiraLinha[i]);
+        free(mat->linhas[i]);
     }
 
-    free(mat->primeiraLinha);
+    free(mat->linhas);
     free(mat);
 }

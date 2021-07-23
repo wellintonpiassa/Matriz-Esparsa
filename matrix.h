@@ -1,15 +1,29 @@
 /* Interface da Matriz Dinâmica */
 
-typedef void* Matrix;
+#define ERROR_ID -100000000
 
-Matrix createMatrix(int rowNumber, int colNumber);
-void printMatrixPointers(Matrix Mat);
-void insertNumber(Matrix Mat, int number, int rowPosition, int colPosition);
-void removeNumber(Matrix Mat, int rowPosition, int colPosition);
-void printMatrixRowAndColumns(Matrix Mat);
-void freeMatrix(Matrix Mat);
-void printFormattedMatrix(Matrix Mat);
-int getQuantidadeLinhas(Matrix Mat);
-int getQuantidadeColunas(Matrix Mat);
-int getQuantidadeColunasOcupadas(Matrix Mat);
-int getNumberInPosition(Matrix Mat, int rowPosition, int colPosition);
+typedef void* Matriz;
+
+/* Cria uma matriz vazia com a quatidade de linhas e colunas informadas nos parametros. */
+Matriz createMatrix(int qtdLinhas, int qtdColunas);
+
+/* Insere um novo valor em uma posicao especificada da matriz */
+int insertNumber(Matriz Mat, int valor, int linha, int coluna);
+
+/* Remove o valor de uma posicao da matriz */
+int removeNumber(Matriz Mat, int linhaID, int colunaID);
+
+/* Imprime na tela a matriz de forma formatada */
+void printFormattedMatrix(Matriz Mat);
+
+/* Retorna a quantidade de linhas que a matriz possui */ 
+int getQuantidadeLinhas(Matriz Mat);
+
+/* Retorna a quantidade de colunas que a matriz possui */
+int getQuantidadeColunas(Matriz Mat);
+
+/* Retorna o valor contido na posicao especificada */ 
+int getNumberInPosition(Matriz Mat, int linhaID, int colunaID);
+
+/* Libera toda a memoria utilizada pela matriz */
+void freeMatrix(Matriz Mat);
