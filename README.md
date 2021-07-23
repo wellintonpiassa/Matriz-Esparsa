@@ -14,6 +14,7 @@ Nesse trabalho conseguimos desenvolver habilidades de lógica, trabalhar com alo
 ## Interface com o usuário
 
 A interface com o usuário é bem simples contendo as opções oferecidas pelo programa.
+
 ![alt text](images/menu.png)
 
 
