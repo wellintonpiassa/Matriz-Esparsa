@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "matrix.h"
+#include "matriz.h"
 #include "menu.h"
 
 int main(){
 
-    mainMenu();
+    menuPrincipal();
     return 0;
 }

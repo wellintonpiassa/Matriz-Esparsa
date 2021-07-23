@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "matrix.h"
+#include "matriz.h"
 
-void mainMenu(){
+void menuPrincipal(){
 
-    Matriz matrix = NULL;
-    int rowNumber = 0;
-    int colNumber = 0;
-    int opt = 0;
+    Matriz matriz = NULL;
+    int numeroLinhas = 0;
+    int numeroColunas = 0;
+    int op = 0;
 
     do{
         system("clear");
@@ -15,12 +15,12 @@ void mainMenu(){
 
         printf("1 - Criar nova matriz\n2 - Inserir valor na matriz\n3 - Remover valor da matriz\n4 - Visualizar a matriz\n5 - Quantidade de linhas da matriz\n6 - Quantidade de colunas da matriz\n7 - Numero em uma posicao dada\n8 - Sair\nDigite qual opcao deseja: ");
 
-        scanf("%d", &opt);
+        scanf("%d", &op);
 
-        switch (opt){
+        switch (op){
         case 1:
 
-            if(matrix != NULL){
+            if(matriz != NULL){
                 printf("A Matriz ja foi criada!\nPressione Enter...");
                 getchar(); getchar();
                 break;
@@ -28,12 +28,12 @@ void mainMenu(){
 
             printf("Informe as dimensoes da matriz:\n");
             printf("Numero de linhas: ");
-            scanf("%d", &rowNumber);
+            scanf("%d", &numeroLinhas);
             printf("Numero de colunas: ");
-            scanf("%d", &colNumber);
-            matrix = createMatrix(rowNumber, colNumber);
+            scanf("%d", &numeroColunas);
+            matriz = criarMatriz(numeroLinhas, numeroColunas);
 
-            if(matrix != NULL)
+            if(matriz != NULL)
                 printf("\nMatriz criada com sucesso!\n");
             else
                 printf("\nFalha ao criar matriz\n");
@@ -44,21 +44,21 @@ void mainMenu(){
 
         case 2:
 
-            if(matrix == NULL){
+            if(matriz == NULL){
                 printf("A Matriz ainda nao foi criada!\nPressione Enter...");
                 getchar(); getchar();
                 break;
             }
 
-            int numberToAdd, line, col;
+            int novoNumero, linha, col;
             printf("Numero a ser adicionado: ");
-            scanf("%d", &numberToAdd);
+            scanf("%d", &novoNumero);
             printf("Linha: ");
-            scanf("%d", &line);
+            scanf("%d", &linha);
             printf("Coluna: ");
             scanf("%d", &col);
 
-            if(insertNumber(matrix, numberToAdd, line, col))
+            if(inserirNumero(matriz, novoNumero, linha, col))
                 printf("Numero inserido com sucesso!\n");
             
             printf("\nPressione Enter para voltar ao menu...");
@@ -67,18 +67,18 @@ void mainMenu(){
 
         case 3:
 
-            if(matrix == NULL){
+            if(matriz == NULL){
                 printf("A Matriz ainda nao foi criada!\nPressione Enter...");
                 getchar(); getchar();
                 break;
             }
 
             printf("Linha: ");
-            scanf("%d", &line);
+            scanf("%d", &linha);
             printf("Coluna: ");
             scanf("%d", &col);
             
-            if(removeNumber(matrix, line, col))
+            if(removerNumero(matriz, linha, col))
                 printf("Numero removido com sucesso!\n");
             
             printf("\nPressione Enter para voltar ao menu...");
@@ -86,25 +86,25 @@ void mainMenu(){
             break;
 
         case 4:
-            if(matrix == NULL){
+            if(matriz == NULL){
                 printf("A Matriz ainda nao foi criada!\nPressione Enter...");
                 getchar(); getchar();
                 break;
             }
 
-            printFormattedMatrix(matrix);
+            printMatrizFormatada(matriz);
             printf("\nPressione Enter para voltar ao menu...");
             getchar(); getchar();
             break;
 
         case 5:
-            if(matrix == NULL){
+            if(matriz == NULL){
                 printf("A Matriz ainda nao foi criada!\nPressione Enter...");
                 getchar(); getchar();
                 break;
             }
             
-            int qtdLinhas = getQuantidadeLinhas(matrix);
+            int qtdLinhas = getQuantidadeLinhas(matriz);
             
             if(qtdLinhas != ERROR_ID)
                 printf("\nA matriz tem %d Linhas\n", qtdLinhas);
@@ -114,13 +114,13 @@ void mainMenu(){
             break;
 
         case 6:
-            if(matrix == NULL){
+            if(matriz == NULL){
                 printf("A Matriz ainda nao foi criada!\nPressione Enter...");
                 getchar(); getchar();
                 break;
             }
 
-            int qtdColunas = getQuantidadeColunas(matrix);
+            int qtdColunas = getQuantidadeColunas(matriz);
             
             if(qtdColunas != ERROR_ID)
                 printf("\nA matriz tem %d colunas\n", qtdColunas);
@@ -130,18 +130,18 @@ void mainMenu(){
             break;
 
         case 7:
-             if(matrix == NULL){
+             if(matriz == NULL){
                 printf("A Matriz ainda nao foi criada!\nPressione Enter...");
                 getchar(); getchar();
                 break; 
             }
 
             printf("Linha: ");
-            scanf("%d", &line);
+            scanf("%d", &linha);
             printf("Coluna: ");
             scanf("%d", &col);
 
-            int valor = getNumberInPosition(matrix, line, col);
+            int valor = getNumeroNaPosicao(matriz, linha, col);
             
             if(valor != ERROR_ID)
                 printf("\nO valor nessa posicao e: %d\n", valor);
@@ -153,7 +153,7 @@ void mainMenu(){
 
         case 8: 
             printf("\nSaindo do programa...\n\n");
-            freeMatrix(matrix);
+            freeMatriz(matriz);
             break;
         
         default:
@@ -163,5 +163,5 @@ void mainMenu(){
             break;
         }
     
-    }while(opt != 8);
+    }while(op != 8);
 }

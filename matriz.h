@@ -5,16 +5,16 @@
 typedef void* Matriz;
 
 /* Cria uma matriz vazia com a quatidade de linhas e colunas informadas nos parametros. */
-Matriz createMatrix(int qtdLinhas, int qtdColunas);
+Matriz criarMatriz(int qtdLinhas, int qtdColunas);
 
 /* Insere um novo valor em uma posicao especificada da matriz */
-int insertNumber(Matriz Mat, int valor, int linha, int coluna);
+int inserirNumero(Matriz Mat, int valor, int linha, int coluna);
 
 /* Remove o valor de uma posicao da matriz */
-int removeNumber(Matriz Mat, int linhaID, int colunaID);
+int removerNumero(Matriz Mat, int linhaID, int colunaID);
 
 /* Imprime na tela a matriz de forma formatada */
-void printFormattedMatrix(Matriz Mat);
+void printMatrizFormatada(Matriz Mat);
 
 /* Retorna a quantidade de linhas que a matriz possui */ 
 int getQuantidadeLinhas(Matriz Mat);
@@ -23,7 +23,7 @@ int getQuantidadeLinhas(Matriz Mat);
 int getQuantidadeColunas(Matriz Mat);
 
 /* Retorna o valor contido na posicao especificada */ 
-int getNumberInPosition(Matriz Mat, int linhaID, int colunaID);
+int getNumeroNaPosicao(Matriz Mat, int linhaID, int colunaID);
 
 /* Libera toda a memoria utilizada pela matriz */
-void freeMatrix(Matriz Mat);
+void freeMatriz(Matriz Mat);

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "matrix.h"
+#include "matriz.h"
 
 typedef struct Coluna coluna;
 
@@ -26,7 +26,7 @@ typedef struct {
 
 /* Linhas e colunas da matriz iniciam com 1 */
 
-Matriz createMatrix(int qtdLinhas, int qtdColunas){
+Matriz criarMatriz(int qtdLinhas, int qtdColunas){
 
     matriz* mat = (matriz*) malloc(sizeof(matriz));
 
@@ -46,7 +46,7 @@ Matriz createMatrix(int qtdLinhas, int qtdColunas){
 }
 
 
-int insertNumber(Matriz Mat, int valor, int linhaDestino, int colunaDestino){
+int inserirNumero(Matriz Mat, int valor, int linhaDestino, int colunaDestino){
     if(Mat == NULL){
         printf("Falha ao inserir valor, matriz invalida\n");
         return 0;
@@ -117,7 +117,7 @@ int insertNumber(Matriz Mat, int valor, int linhaDestino, int colunaDestino){
 }
 
 
-int removeNumber(Matriz Mat, int linhaID, int colunaID){
+int removerNumero(Matriz Mat, int linhaID, int colunaID){
 
     if(Mat == NULL){
         printf("Falha ao remover valor, matriz invalida\n");
@@ -184,10 +184,10 @@ int getQuantidadeColunas(Matriz Mat){
 }
 
 
-int getNumberInPosition(Matriz Mat, int linhaID, int colunaID){
+int getNumeroNaPosicao(Matriz Mat, int linhaID, int colunaID){
 
     if(Mat == NULL){
-        printf("Erro getNumberInPosition: Matriz invalida\n");
+        printf("Erro getNumeroNaPosicao: Matriz invalida\n");
         return ERROR_ID;
     }
 
@@ -214,7 +214,7 @@ int getNumberInPosition(Matriz Mat, int linhaID, int colunaID){
 }
 
 
-void printFormattedMatrix(Matriz Mat){
+void printMatrizFormatada(Matriz Mat){
 
     if(Mat == NULL){
         printf("Erro print: Matriz invalida\n");
@@ -263,7 +263,7 @@ void printFormattedMatrix(Matriz Mat){
 }
 
 
-void freeMatrix(Matriz Mat){
+void freeMatriz(Matriz Mat){
     
     if(Mat == NULL)
         return;
